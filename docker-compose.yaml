@@ -1,0 +1,61 @@
+version: '3'
+services:
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    container_name: nginx-proxy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - conf:/etc/nginx/conf.d
+      - vhost:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - dhparam:/etc/nginx/dhparam
+      - certs:/etc/nginx/certs:ro
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+  letsencrypt:
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    container_name: nginx-proxy-le
+    restart: unless-stopped
+    volumes:
+      - certs:/etc/nginx/certs:rw
+      - vhost:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - acme:/etc/acme.sh
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - NGINX_PROXY_CONTAINER=nginx-proxy
+  hagall:
+    image: aukilabs/hagall:v0.4
+    container_name: hagall
+    restart: unless-stopped
+    ports:
+    - 18190:18190
+    environment:
+      VIRTUAL_HOST: hagall.example.com
+      VIRTUAL_PORT: 8080
+      LETSENCRYPT_HOST: hagall.example.com
+      HAGALL_ADDR: :8080
+      HAGALL_PUBLIC_ENDPOINT: https://hagall.example.com
+      HAGALL_WALLET_ADDR: 0x0
+      HAGALL_HDS_ENDPOINT: https://hds.aukiverse.com
+      HAGALL_LOG_LEVEL: info
+      HAGALL_HDS_REGISTRATION_INTERVAL: 10s
+      HAGALL_HDS_HEALTHCHECK_TTL: 1m0s
+      HAGALL_EVENTS_ENDPOINT: https://87cuuzjn40.execute-api.us-west-1.amazonaws.com/LogProd_serverless_lambda_stage/log
+      HAGALL_EVENTS_QUEUE_SIZE: "10000"
+      HAGALL_SYNC_CLOCK_INTERVAL: "5s"
+      HAGALL_SPACE_TIMEOUT: "2h"
+      HAGALL_SPACE_TIMEOUT_CHECK_INTERVAL: "5m"
+      HAGALL_ENABLE_ODAL: true
+      HAGALL_ENABLE_VIKJA: true
+      HAGALL_ENABLE_POL: true
+      HAGALL_ENABLE_DAGAZ: true
+volumes:
+  conf:
+  vhost:
+  html:
+  dhparam:
+  certs:
+  acme:
