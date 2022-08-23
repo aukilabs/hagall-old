@@ -1,0 +1,49 @@
+version: '3'
+services:
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    container_name: nginx-proxy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - conf:/etc/nginx/conf.d
+      - vhost:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - dhparam:/etc/nginx/dhparam
+      - certs:/etc/nginx/certs:ro
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+  letsencrypt:
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    container_name: nginx-proxy-le
+    restart: unless-stopped
+    volumes:
+      - certs:/etc/nginx/certs:rw
+      - vhost:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - acme:/etc/acme.sh
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - NGINX_PROXY_CONTAINER=nginx-proxy
+  hagall:
+    image: aukilabs/hagall:stable
+    container_name: hagall
+    restart: unless-stopped
+    ports:
+    - 18190:18190
+    environment:
+      VIRTUAL_HOST: hagall.example.com
+      VIRTUAL_PORT: 8080
+      LETSENCRYPT_HOST: hagall.example.com
+      HAGALL_ADDR: :8080
+      HAGALL_PUBLIC_ENDPOINT: https://hagall.example.com
+      HAGALL_WALLET_ADDR: 0x0
+      HAGALL_LOG_LEVEL: info
+volumes:
+  conf:
+  vhost:
+  html:
+  dhparam:
+  certs:
+  acme:
