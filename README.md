@@ -3,6 +3,7 @@
 This repository only contains Hagall releases as Hagall is not open source at this moment.
 
 ![](hagall.png)
+
 _Hagall means Hail in Old Norse._
 
 Hagall is a Real Time Networking Server responsible for processing, responding to and broadcasting networking messages to connected clients (participants) in a session similar to how a multiplayer networking engine handles message passing in an first-person-shooter game.
@@ -42,7 +43,8 @@ Auki's Hagall Discovery Service will perform regular checks on the health of you
 ### Configuration
 
 Configuration parameters can be passed to Hagall either as environment variables or flags.
-`./hagall --public-endpoint <the public endpoint where this Hagall server is reachable>` will launch with sane defaults but if you for some reason want to modify the default configuration of Hagall you can run `./hagall -h` for a full list of parameters.
+
+`./hagall --public-endpoint https://hagall.example.com` (where `https://hagall.example.com` is the public, external address where this Hagall server is reachable) will launch Hagall with sane defaults, but if you for some reason want to modify the default configuration of Hagall you can run `./hagall -h` for a full list of parameters.
 
 Here are some example parameters:
 
@@ -118,7 +120,7 @@ helm install hagall aukilabs/hagall --set config.HAGALL_PUBLIC_ENDPOINT=https://
 
 ### Uninstalling
 
-To uninstall (delete) the hagall deployment:
+To uninstall (delete) the `hagall` deployment:
 
 ```
 helm delete hagall
