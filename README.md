@@ -134,7 +134,7 @@ Values can be overridden either by using a values file (the `-f` or `--values` f
 
 You must at least set the `config.HAGALL_PUBLIC_ENDPOINT` key for server registration to work.
 
-# LICENSE
+# License
 The MIT License (MIT)
 Copyright © 2022 Auki Labs Limited>
 
