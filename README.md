@@ -1,4 +1,6 @@
-# The MIT License (MIT)
+# Hagall
+
+## The MIT License (MIT)
 Copyright © 2022 Auki Las Limited
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -7,7 +9,7 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-# Hagall
+## Introduction
 
 This repository only contains Hagall releases as Hagall is not open source at this moment.
 
@@ -29,15 +31,13 @@ The core responsibilities of Hagall are:
 - Addition and deletion of entities.
 - Broadcasting of messages to participants.
 
-# Server Operator's Manual
+## Server Operator's Manual
 
 While we at Auki Labs run several Hagall servers in multiple regions on AWS, we allow for anyone to become a Hagall server operator and help us run part of our infrastructure.
 
 At a later stage we plan to launch a system that rewards Hagall server operators with tokens based on traffic served.
 
 If you have spare compute resources, enough bandwidth and wish to become a Hagall server operator, please see a deployment method below for instructions on how to get started.
-
-## Running a Hagall server
 
 ### Minimum requirements
 
@@ -62,7 +62,7 @@ Here are some example parameters:
 | --wallet-addr     | HAGALL_WALLET_ADDR     | _N/A_   | 0x0                        | The crypto wallet address to be rewarded. (currently N/A)                                                                  |
 | --public-endpoint | HAGALL_PUBLIC_ENDPOINT | _N/A_   | https://hagall.example.com | The public endpoint where this Hagall server is reachable. This endpoint will be registered with Hagall Discovery Service. |
 | --log-level       | HAGALL_LOG_LEVEL       | info    | debug                      | The log level (debug, info, warning or error)                                                                              |
-## Binary
+### Binary
 
 > **_NOTE:_** If you choose to use this deployment method, you need to set up your own HTTPS web server or reverse proxy with an SSL certificate.
 
@@ -81,7 +81,7 @@ We build pre-compiled binaries for these operating systems and architectures:
 
 You can optionally use a daemon manager such as systemd, launchd, SysV Init, runit or Supervisord.
 
-## Docker
+### Docker
 
 Hagall is available on [Docker Hub](https://hub.docker.com/r/aukilabs/hagall).
 
