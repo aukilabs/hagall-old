@@ -136,7 +136,7 @@ You must at least set the `config.HAGALL_PUBLIC_ENDPOINT` key for server registr
 
 
 ### Terms
-*A. GENERAL TERMS
+*A. GENERAL TERMS*
 1. Term. This Agreement shall commence on the Effective Date and, unless terminated earlier, continue
 until terminated.
 2. Termination. Each party may terminate this Agreement at any time for any or no reason by providing
