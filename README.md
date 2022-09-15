@@ -11,8 +11,6 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 
 ## Introduction
 
-![](hagall.png)
-
 _Hagall means Hail in Old Norse._
 
 Hagall is a Real Time Networking Server responsible for processing, responding to and broadcasting networking messages to connected clients (participants) in a session similar to how a multiplayer networking engine handles message passing in an first-person-shooter game.
