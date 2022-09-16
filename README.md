@@ -62,7 +62,7 @@ Here are some example parameters:
 
 > **_NOTE:_** If you choose to use this deployment method, you need to set up your own HTTPS web server or reverse proxy with an SSL certificate.
 
-### Currently supported platforms
+#### Currently supported platforms
 
 We build pre-compiled binaries for these operating systems and architectures:
 
@@ -89,7 +89,7 @@ Here's an example of how to run it:
 docker run -e HAGALL_PUBLIC_ENDPOINT=https://hagall.example.com aukilabs/hagall:stable
 ```
 
-### Supported tags
+#### Supported tags
 _See the full list on [Docker Hub](https://hub.docker.com/r/aukilabs/hagall)._
 
 * `latest` (bleeding edge, not recommended)
