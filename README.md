@@ -15,7 +15,7 @@ _Hagall means Hail in Old Norse._
 
 Hagall is a Real Time Networking Server responsible for processing, responding to and broadcasting networking messages to connected clients (participants) in a session similar to how a multiplayer networking engine handles message passing in an first-person-shooter game.
 
-Hagall is through its module system extensible, but in its core a simple networking engine that manages 3 types of abstractions:
+Hagall is through its module system and Entity Component System extensible, but in its core a simple networking engine that manages 3 types of abstractions:
 
 - **Session** - A session facilitates the communication and in-memory persistence of participants, entities and actions inside an OpenGL coordinate system in unit meters. A session is similar to an FPS game session. Participants' positional data and actions are sent and broadcast as quickly as possible and only the messages that are required to retrieve the current state of the session are stored in-memory to support late joiners. Multiple sessions can exist in the same Hagall server and each session is identified by a string ID in the format `<hagall_id>x<session_id>` e.g. `5fx3a`.
 - **Participant** - Represents a connected client e.g. a mobile device or other hardware that wishes to interact with entities and other participants in a session.
@@ -37,11 +37,13 @@ If you have spare compute resources, enough bandwidth and wish to become a Hagal
 
 If you are running into problems, you can report them as [issues](https://github.com/aukilabs/hagall/issues) here on GitHub or talk to us on [Discord](https://discord.gg/aukiverse).
 
+**It is important that your server is running 24/7 without interruption. When a server with active players is shut down, the players will lose their game session. Thus servers that misbehave will be delisted**
+
 ### Minimum requirements
 
 - x86 or ARM processor
 - At least 64 MiB of RAM
-- A stable Internet connection, we recommend at least 10 Mbps downstream and upstream
+- A stable Internet connection with a public IP, we recommend at least 10 Mbps downstream and upstream
 - A supported operating system, we currently provide pre-compiled binaries for Windows, macOS, Linux, FreeBSD, Solaris as well as Docker
 - An HTTPS compatible web server or reverse proxy with an SSL certificate installed, alternatively use our Docker Compose or Kubernetes set-up that includes it
 
