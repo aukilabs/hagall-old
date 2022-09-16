@@ -35,6 +35,8 @@ At a later stage we plan to launch a system that rewards Hagall server operators
 
 If you have spare compute resources, enough bandwidth and wish to become a Hagall server operator, please see a deployment method below for instructions on how to get started.
 
+If you are running into problems, you can report them as [issues](https://github.com/aukilabs/hagall/issues) here on GitHub or talk to us on [Discord](https://discord.gg/aukiverse).
+
 ### Minimum requirements
 
 - x86 or ARM processor
