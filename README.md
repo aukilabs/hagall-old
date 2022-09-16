@@ -106,17 +106,17 @@ Since Hagall needs to be exposed with an HTTPS address and Hagall itself doesn't
 2. Configure the environment variables to your liking (you must at least set `VIRTUAL_HOST`, `LETSENCRYPT_HOST` and `HAGALL_PUBLIC_ENDPOINT`)
 3. With the YAML file in the same folder, start the containers using Docker Compose: `docker-compose up -d`
 
-## Kubernetes
+### Kubernetes
 
 Auki provides a Helm chart for running Hagall in Kubernetes. We recommend that you use this Helm chart rather than writing your own Kubernetes manifests. For more information about [what Helm is](https://helm.sh/docs/topics/architecture/) and how to [install](https://helm.sh/docs/intro/install/) it, see Helm's official website.
 
-### Requirements
+#### Requirements
 
 * Kubernetes 1.14+
 * Helm 3
 * An HTTPS compatible ingress controller
 
-### Installing
+#### Installing
 
 The chart can be deployed by CI/CD tools such as ArgoCD or Flux or it can be deployed using Helm on the command line like this:
 
@@ -125,7 +125,7 @@ helm repo add aukilabs https://charts.aukiverse.com
 helm install hagall aukilabs/hagall --set config.HAGALL_PUBLIC_ENDPOINT=https://hagall.example.com
 ```
 
-### Uninstalling
+#### Uninstalling
 
 To uninstall (delete) the `hagall` deployment:
 
@@ -133,12 +133,10 @@ To uninstall (delete) the `hagall` deployment:
 helm delete hagall
 ```
 
-### Values
+#### Values
 
 Please see [values.yaml](https://github.com/aukilabs/helm-charts/blob/main/charts/hagall/values.yaml) for the available values and their defaults.
 
 Values can be overridden either by using a values file (the `-f` or `--values` flags) or by setting them on the command line using the `--set` flag. For more information, see the official [documentation](https://helm.sh/docs/helm/helm_install/).
 
 You must at least set the `config.HAGALL_PUBLIC_ENDPOINT` key for server registration to work.
-
-
