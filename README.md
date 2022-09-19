@@ -37,15 +37,29 @@ If you have spare compute resources, enough bandwidth and wish to become a Hagal
 
 If you are running into problems, you can report them as [issues](https://github.com/aukilabs/hagall/issues) here on GitHub or talk to us on [Discord](https://discord.gg/aukiverse).
 
-**It is important that your server is running 24/7 without interruption. When a server with active players is shut down, the players will lose their game session. Thus servers that misbehave will be delisted**
+**It is important that your server is running 24/7 without interruption. When a server with active players is shut down, the players will lose their game session which is bad experience. Thus servers that misbehave will be delisted and not receive any more incoming traffic.**
 
 ### Minimum requirements
 
-- x86 or ARM processor
+Most modern computers will be able to run Hagall. We have tested on desktops, laptops, servers and Raspberry Pis.
+
+- An x86 or ARMv6+ processor
 - At least 64 MiB of RAM
-- A stable Internet connection with a public IP, we recommend at least 10 Mbps downstream and upstream
-- A supported operating system, we currently provide pre-compiled binaries for Windows, macOS, Linux, FreeBSD, Solaris as well as Docker
-- An HTTPS compatible web server or reverse proxy with an SSL certificate installed, alternatively use our Docker Compose or Kubernetes set-up that includes it
+- At least 20 MiB of disk space
+- A supported operating system, we currently provide pre-compiled binaries for Windows, macOS, Linux, FreeBSD, Solaris as well as Docker images
+
+Additionally you need this in order to expose Hagall to the Internet:
+
+ An HTTPS compatible web server or reverse proxy with
+- Web server or reverse proxy which
+  - is compatible with HTTPS and WebSockets (HTTP/1.1 or later)
+  - has an SSL certificate installed
+- A stable Internet connection with
+  - an externally accessible, public IP address for your reverse proxy to listen to
+  - at least 10 Mbps downstream and upstream
+- A domain name configured to point to your IP address
+
+You can use our Docker Compose or Kubernetes setup that includes a basic nginx reverse proxy with a Let's Encrypt issued SSL certificate.
 
 Auki's Hagall Discovery Service will perform regular checks on the health of your server to determine if it's fit to serve traffic. Make sure that you have enough spare compute capacity and bandwidth for hosting sessions or your server might be delisted from the network.
 
@@ -57,14 +71,16 @@ Configuration parameters can be passed to Hagall either as environment variables
 
 Here are some example parameters:
 
-| Flag             | Environment variable   | Default | Example                     | Description                                                                                                                |
-| ---------------- | ---------------------- | ------- | -------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| --log-indent     | HAGALL_LOG_INDENT     | false   | true                        | Indent logs                                                                  |
+| Flag              | Environment variable   | Default | Example                    | Description                                                                                                                |
+| ----------------- | ---------------------- | ------- | -------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| --addr            | HAGALL_ADDR            | :4000   | :4000                      | Listening address for client connections. This is the port you want your reverse proxy to forward traffic to.              |
+| --log-indent      | HAGALL_LOG_INDENT      | false   | true                       | Indent logs                                                                                                                |
 | --public-endpoint | HAGALL_PUBLIC_ENDPOINT | _N/A_   | https://hagall.example.com | The public endpoint where this Hagall server is reachable. This endpoint will be registered with Hagall Discovery Service. |
 | --log-level       | HAGALL_LOG_LEVEL       | info    | debug                      | The log level (debug, info, warning or error)                                                                              |
+
 ### Binary
 
-> **_NOTE:_** If you choose to use this deployment method, you need to set up your own HTTPS web server or reverse proxy with an SSL certificate.
+> **_NOTE:_** If you choose to use this deployment method, you need to set up your own HTTPS web server or reverse proxy with an SSL certificate. Hagall listens for incoming connections on port 4000 by default, but this is changeable, see the configuration options above.
 
 #### Currently supported platforms
 
@@ -80,8 +96,16 @@ We build pre-compiled binaries for these operating systems and architectures:
 
 1. Download the latest Hagall from [GitHub](https://github.com/aukilabs/hagall/releases)
 2. Run it with `./hagall --public-endpoint=https://hagall.example.com`
+3. Expose it using your own reverse proxy with an SSL certificate.
 
-You can optionally use a daemon manager such as systemd, launchd, SysV Init, runit or Supervisord.
+We comment you to use a daemon manager such as systemd, launchd, SysV Init, runit or Supervisord, to make sure Hagall stays running at all times.
+
+Make sure that your web server or reverse proxy has support for WebSockets. If you choose to use nginx, this configuration is needed to enable WebSocket support for the Hagall upstream:
+```
+proxy_http_version 1.1;
+proxy_set_header Upgrade $http_upgrade;
+proxy_set_header Connection "upgrade";
+```
 
 ### Docker
 
@@ -92,6 +116,8 @@ Here's an example of how to run it:
 ```
 docker run -e HAGALL_PUBLIC_ENDPOINT=https://hagall.example.com aukilabs/hagall:stable
 ```
+
+Hagall listens for incoming traffic on port 4000 by default.
 
 #### Supported tags
 _See the full list on [Docker Hub](https://hub.docker.com/r/aukilabs/hagall)._
@@ -104,11 +130,12 @@ _See the full list on [Docker Hub](https://hub.docker.com/r/aukilabs/hagall)._
 
 ### Docker Compose
 
-Since Hagall needs to be exposed with an HTTPS address and Hagall itself doesn't terminate HTTPS, we recommend you to use our Docker Compose file that sets up an nginx proxy container that terminates HTTPS and a letsencrypt container that obtains a free Let's Encrypt SSL certificate alongside Hagall.
+Since Hagall needs to be exposed with an HTTPS address and Hagall itself doesn't terminate HTTPS, we recommend you to use our Docker Compose file that sets up an `nginx-proxy` container that terminates HTTPS and a `letsencrypt` container that obtains a free Let's Encrypt SSL certificate alongside Hagall.
 
-1. Download the latest Docker Compose YAML file from [GitHub](https://github.com/aukilabs/hagall/blob/main/docker-compose.yml)
-2. Configure the environment variables to your liking (you must at least set `VIRTUAL_HOST`, `LETSENCRYPT_HOST` and `HAGALL_PUBLIC_ENDPOINT`)
-3. With the YAML file in the same folder, start the containers using Docker Compose: `docker-compose up -d`
+1. Configure your domain name to point to your externally exposed public IP address and configure any firewalls and port forwarding rules to allow incoming traffic to port 80 and 443.
+2. Download the latest Docker Compose YAML file from [GitHub](https://github.com/aukilabs/hagall/blob/main/docker-compose.yml).
+3. Configure the environment variables to your liking (you must at least set `VIRTUAL_HOST`, `LETSENCRYPT_HOST` and `HAGALL_PUBLIC_ENDPOINT`, set these to the domain name you configured in step 1).
+4. With the YAML file in the same folder, start the containers using Docker Compose: `docker-compose up -d`
 
 ### Kubernetes
 
@@ -118,7 +145,7 @@ Auki provides a Helm chart for running Hagall in Kubernetes. We recommend that y
 
 * Kubernetes 1.14+
 * Helm 3
-* An HTTPS compatible ingress controller
+* An HTTPS and WebSocket compatible ingress controller with an SSL certificate that has already been configured
 
 #### Installing
 
@@ -143,4 +170,4 @@ Please see [values.yaml](https://github.com/aukilabs/helm-charts/blob/main/chart
 
 Values can be overridden either by using a values file (the `-f` or `--values` flags) or by setting them on the command line using the `--set` flag. For more information, see the official [documentation](https://helm.sh/docs/helm/helm_install/).
 
-You must at least set the `config.HAGALL_PUBLIC_ENDPOINT` key for server registration to work.
+You must at least set the `config.HAGALL_PUBLIC_ENDPOINT` key for server registration to work. But depending on which ingress controller you use, you need to set `ingress.enabled=true`, `ingress.hosts[0].host=hagall.example.com` and so on.
