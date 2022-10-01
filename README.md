@@ -50,8 +50,7 @@ Most modern computers will be able to run Hagall. We have tested on desktops, la
 
 Additionally you need this in order to expose Hagall to the Internet:
 
- An HTTPS compatible web server or reverse proxy with
-- Web server or reverse proxy which
+- A web server or reverse proxy which
   - is compatible with HTTPS and WebSockets (HTTP/1.1 or later)
   - has an SSL certificate installed
 - A stable Internet connection with
