@@ -127,6 +127,10 @@ _See the full list on [Docker Hub](https://hub.docker.com/r/aukilabs/hagall)._
 * `v0.4` (specific minor version)
 * `v0.4.27` (specific patch version)
 
+#### Upgrading
+
+If you use the `stable` tag (default), simply run `docker pull aukilabs/hagall:stable` and then restart your container with `docker restart hagall` (if `hagall` is the name of your container). If you use a specific patch version tag, change to use the latest one (such as `v0.4.33`) instead and then restart your container.
+
 ### Docker Compose
 
 Since Hagall needs to be exposed with an HTTPS address and Hagall itself doesn't terminate HTTPS, we recommend you to use our Docker Compose file that sets up an `nginx-proxy` container that terminates HTTPS and a `letsencrypt` container that obtains a free Let's Encrypt SSL certificate alongside Hagall.
@@ -135,6 +139,10 @@ Since Hagall needs to be exposed with an HTTPS address and Hagall itself doesn't
 2. Download the latest Docker Compose YAML file from [GitHub](https://github.com/aukilabs/hagall/blob/main/docker-compose.yml).
 3. Configure the environment variables to your liking (you must at least set `VIRTUAL_HOST`, `LETSENCRYPT_HOST` and `HAGALL_PUBLIC_ENDPOINT`, set these to the domain name you configured in step 1).
 4. With the YAML file in the same folder, start the containers using Docker Compose: `docker-compose up -d`
+
+#### Upgrading
+
+You can do the same steps as for Docker, but if you're not already running Hagall or you have modified the `docker-compose.yml` file recently and want to deploy the changes, you can navigate to the folder where you have your `docker-compose.yml` file and then run `docker-compose pull` followed by `docker-compose down hagall` and `docker-compose up -d hagall`.
 
 ### Kubernetes
 
@@ -170,3 +178,7 @@ Please see [values.yaml](https://github.com/aukilabs/helm-charts/blob/main/chart
 Values can be overridden either by using a values file (the `-f` or `--values` flags) or by setting them on the command line using the `--set` flag. For more information, see the official [documentation](https://helm.sh/docs/helm/helm_install/).
 
 You must at least set the `config.HAGALL_PUBLIC_ENDPOINT` key for server registration to work. But depending on which ingress controller you use, you need to set `ingress.enabled=true`, `ingress.hosts[0].host=hagall.example.com` and so on.
+
+#### Upgrading
+
+We recommend you to change to use `image.pullPolicy: Always` if you use a non-specific version tag like `stable`/`v0`/`v0.4` (configured by changing the `image.tag` value of the Helm chart), or choose to use a specific version tag like `v0.4.33`. Check *Supported tags* or the *Tags* tab on [Docker Hub](https://hub.docker.com/r/aukilabs/hagall) for the tags you can use.
