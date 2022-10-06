@@ -129,7 +129,9 @@ _See the full list on [Docker Hub](https://hub.docker.com/r/aukilabs/hagall)._
 
 #### Upgrading
 
-If you use the `stable` tag (default), simply run `docker pull aukilabs/hagall:stable` and then restart your container with `docker restart hagall` (if `hagall` is the name of your container). If you use a specific patch version tag, change to use the latest one (such as `v0.4.33`) instead and then restart your container.
+If you're using a non-version specific tag (`stable` or `latest`) or if the version tag you use matches the new version of Hagall you want to upgrade to, simply run `docker pull aukilabs/hagall:stable` (where `stable` is the tag you use) and then restart your container with `docker restart hagall` (if `hagall` is the name of your container).
+
+If you're using a version specific tag and the new version of Hagall you want to upgrade to doesn't match the tag you use, you need to first change the tag you use and then restart your container. (`v0` matches any v0.x.x version, `v0.4` matches any v0.4.x version and so on.)
 
 ### Docker Compose
 
