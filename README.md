@@ -113,10 +113,12 @@ Hagall is available on [Docker Hub](https://hub.docker.com/r/aukilabs/hagall).
 Here's an example of how to run it:
 
 ```
-docker run -e HAGALL_PUBLIC_ENDPOINT=https://hagall.example.com aukilabs/hagall:stable
+docker run --restart=unless-stopped -e HAGALL_PUBLIC_ENDPOINT=https://hagall.example.com aukilabs/hagall:stable
 ```
 
 Hagall listens for incoming traffic on port 4000 by default.
+
+We also recommend you to configure Docker to start automatically with your operating system. Using `--restart=unless-stopped` in your `docker run` command will start Hagall automatically after the Docker daemon has started.
 
 #### Supported tags
 _See the full list on [Docker Hub](https://hub.docker.com/r/aukilabs/hagall)._
@@ -135,12 +137,14 @@ If you're using a version specific tag and the new version of Hagall you want to
 
 ### Docker Compose
 
-Since Hagall needs to be exposed with an HTTPS address and Hagall itself doesn't terminate HTTPS, we recommend you to use our Docker Compose file that sets up an `nginx-proxy` container that terminates HTTPS and a `letsencrypt` container that obtains a free Let's Encrypt SSL certificate alongside Hagall.
+Since Hagall needs to be exposed with an HTTPS address and Hagall itself doesn't terminate HTTPS, instead of using the pure Docker setup as described above, we recommend you to use our Docker Compose file that sets up an `nginx-proxy` container that terminates HTTPS and a `letsencrypt` container that obtains a free Let's Encrypt SSL certificate alongside Hagall.
 
 1. Configure your domain name to point to your externally exposed public IP address and configure any firewalls and port forwarding rules to allow incoming traffic to port 80 and 443.
 2. Download the latest Docker Compose YAML file from [GitHub](https://github.com/aukilabs/hagall/blob/main/docker-compose.yml).
 3. Configure the environment variables to your liking (you must at least set `VIRTUAL_HOST`, `LETSENCRYPT_HOST` and `HAGALL_PUBLIC_ENDPOINT`, set these to the domain name you configured in step 1).
 4. With the YAML file in the same folder, start the containers using Docker Compose: `docker-compose up -d`
+
+Just as with the pure Docker setup, we recommend you to configure Docker to start automatically with your operating system. If you use our standard Docker Compose YAML file, the containers will start automatically after the Docker daemon has started.
 
 #### Upgrading
 
@@ -184,3 +188,49 @@ You must at least set the `config.HAGALL_PUBLIC_ENDPOINT` key for server registr
 #### Upgrading
 
 We recommend you to change to use `image.pullPolicy: Always` if you use a non-specific version tag like `stable`/`v0`/`v0.4` (configured by changing the `image.tag` value of the Helm chart), or choose to use a specific version tag like `v0.4.33`. Check *Supported tags* or the *Tags* tab on [Docker Hub](https://hub.docker.com/r/aukilabs/hagall) for the tags you can use.
+
+### Testing
+
+After launching Hagall, it's a good idea to take a look at the logs to make sure your server is registered, working and accessible. There are a few things you can look for:
+
+* "hagall is successfully registered to hds" should show up in the log
+* `"message":"new client is connected","tags":{"app-key":"0xSMOKE"}}` should show up in the log, these are smoke tests running from the central Hagall Discovery Service (HDS) to test that the server is working
+* You can also check metrics like `ws_connected_clients`, see more [details](#Metrics) below
+
+### Troubleshooting and metrics
+
+If registration to HDS fails, check the status code in the log message. The status code is the response from HDS when it tries to call your Hagall server.
+
+* `"status":"504 Gateway Timeout"` or `403 Forbidden` could mean that HDS couldn't reach your Hagall instance because the connection to your public endpoint (URL) timed out. It could happen because you didn't do port forwarding in your router or didn't allow your web server / reverse proxy (such as nginx) or port 443 in your firewall. We have also seen cases where Internet Service Providers blocked common service ports like 80 and 443. Here's an example for [Orcon](https://help.orcon.net.nz/hc/en-us/articles/360005168154-Port-filtering-in-My-Orcon).
+* You can test that your Hagall is reachable from the public Internet using [reqbin.com](https://reqbin.com/). Write your Hagall URL (the "public endpoint" address you configured) and press the Send button. If you get a status 400 (Bad Request) back, the text is green and the content says "not websocket protocol", everything is working as it should.
+* `403 Forbidden` could also happen if your clock is out of sync. Sync it and try again. It could also happen if you run two Hagall servers at the same time with the same public endpoint (URL). Make sure you only run one Hagall with one unique public endpoint.
+* `503 Service Unavailable` means that HDS reaches a reverse proxy (such as nginx) but the backend server (Hagall) is unavailable. Check the reverse proxy logs to verify that HDS actually reaches the reverse proxy you think it reaches. And make sure Hagall is running and that the reverse proxy points to Hagall using the address it listens to (port 4000 by default). You can also try to restart your reverse proxy.
+* `400 Bad Request` could mean that the format of your public endpoint is invalid. It needs to be prefixed with `https://` and not `http://`. Follow the same format as in the [configuration](#Configuration) section. Note that if you use the Docker Compose setup, `VIRTUAL_HOST` and `LETSENCRYPT_HOST` should be without the `https://` prefix and `HAGALL_PUBLIC_ENDPOINT` should have the `https://` prefix.
+
+#### Admin port
+
+Other than the ordinary port used for WebSocket traffic, Hagall is also listening on a separate port for administrative purposes.
+This port is not exposed externally by default and should not be, so you would have to connect to it from the same machine as you're running Hagall on or from your internal network only.
+
+```
+    --admin-addr                string               Admin listening address.
+                                                     Env:     HAGALL_ADMIN_ADDR
+                                                     Default: ":18190"
+```
+
+For example if Hagall is running on your local machine and you visit http://localhost:18190/debug/pprof/ you can get profiling data.
+If you set up Prometheus, you can scrape metrics from the /metrics endpoint.
+
+##### Endpoints
+
+* `/metrics` - Prometheus-formatted metrics
+* `/health` - Health check endpoint, returns 200 OK if service is running
+* `/debug/pprof/` - Index page of Go's [pprof](https://pkg.go.dev/net/http/pprof) package
+  * There are many sub-endpoints useful for profiling, please refer to the index page
+
+#### Metrics
+
+Other than the standard Golang metrics coming from [prometheus/client_golang](https://github.com/prometheus/client_golang) with `go_*`, `process_*` prefixes etc., these additional metrics are available:
+
+* `ws_*` - WebSocket related metrics
+  * A very useful metrics to look at is `ws_connected_clients` which is a gauge that represents the number of connected WebSocket clients. Note that the smoke tests are also WebSocket clients so it will flip between 0 and 1 during these tests.
