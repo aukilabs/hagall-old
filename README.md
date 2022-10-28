@@ -13,13 +13,13 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 
 _Hagall means Hail in Old Norse._
 
-Hagall is a Real Time Networking Server responsible for processing, responding to and broadcasting networking messages to connected clients (participants) in a session similar to how a multiplayer networking engine handles message passing in an first-person-shooter game.
+Hagall is a Real-Time Networking Server responsible for processing, responding to and broadcasting networking messages to connected clients (participants) in a session similar to how a multiplayer networking engine handles message passing in a first-person-shooter game.
 
-Hagall is through its module system and Entity Component System extensible, but in its core a simple networking engine that manages 3 types of abstractions:
+Hagall is, through its module system and Entity Component System, extensible, but at its core, a simple networking engine that manages 3 types of abstractions:
 
-- **Session** - A session facilitates the communication and in-memory persistence of participants, entities and actions inside an OpenGL coordinate system in unit meters. A session is similar to an FPS game session. Participants' positional data and actions are sent and broadcast as quickly as possible and only the messages that are required to retrieve the current state of the session are stored in-memory to support late joiners. Multiple sessions can exist in the same Hagall server and each session is identified by a string ID in the format `<hagall_id>x<session_id>` e.g. `5fx3a`.
-- **Participant** - Represents a connected client e.g. a mobile device or other hardware that wishes to interact with entities and other participants in a session.
-- **Entity** - An entity is an object in a session with a _Pose_ and an ID and it is owned by a specific participant. Hagall does not care about what an entity represents, it could be a 3D asset, an audio source or a particle system. It's up to the application implementer to map their game objects to corresponding entities.
+- **Session** - A session facilitates the communication and in-memory persistence of participants, entities, and actions inside an OpenGL coordinate system in unit meters. A session is similar to an FPS game session. Participants' positional data and actions are sent and broadcast as quickly as possible, and only the messages that are required to retrieve the current state of the session are stored in memory to support late joiners. Multiple sessions can exist in the same Hagall server, and each session is identified by a string ID in the format `<hagall_id>x<session_id>` e.g. `5fx3a`.
+- **Participant** - Represents a connected client e.g., a mobile device or other hardware that wishes to interact with entities and other participants in a session.
+- **Entity** - An entity is an object in a session with a _Pose_ and an ID, and it is owned by a specific participant. Hagall does not care about what an entity represents. It could be a 3D asset, an audio source, or a particle system. It's up to the application implementer to map their game objects to corresponding entities.
 
 The core responsibilities of Hagall are:
 
@@ -29,38 +29,38 @@ The core responsibilities of Hagall are:
 
 ## Server Operator's Manual
 
-While we at Auki Labs run several Hagall servers in multiple regions on AWS, we allow for anyone to become a Hagall server operator and help us run part of our infrastructure.
+While we at Auki Labs run several Hagall servers in multiple regions on AWS, we allow anyone to become a Hagall server operator and help us run part of our infrastructure.
 
-At a later stage we plan to launch a system that rewards Hagall server operators with tokens based on traffic served.
+At a later stage, we plan to launch a system that rewards Hagall server operators with tokens based on traffic served.
 
-If you have spare compute resources, enough bandwidth and wish to become a Hagall server operator, please see a deployment method below for instructions on how to get started.
+If you have spare compute resources, enough bandwidth and wish to become a Hagall server operator, please see the deployment method below for instructions on how to get started.
 
 If you are running into problems, you can report them as [issues](https://github.com/aukilabs/hagall/issues) here on GitHub or talk to us on [Discord](https://discord.gg/aukiverse).
 
-**It is important that your server is running 24/7 without interruption. When a server with active players is shut down, the players will lose their game session which is bad experience. Thus servers that misbehave will be delisted and not receive any more incoming traffic.**
+**It is important that your server is running 24/7 without interruption. When a server with active players is shut down, the players will lose their game session, which is a bad experience. Thus servers that misbehave will be delisted and not receive any more incoming traffic.**
 
 ### Minimum requirements
 
-Most modern computers will be able to run Hagall. We have tested on desktops, laptops, servers and Raspberry Pis.
+Most modern computers will be able to run Hagall. We have tested on desktops, laptops, servers, and Raspberry Pis.
 
 - An x86 or ARMv6+ processor
 - At least 64 MiB of RAM
 - At least 20 MiB of disk space
 - A supported operating system, we currently provide pre-compiled binaries for Windows, macOS, Linux, FreeBSD, Solaris as well as Docker images
 
-Additionally you need this in order to expose Hagall to the Internet:
+Additionally, you need this in order to expose Hagall to the Internet:
 
 - A web server or reverse proxy which
-  - is compatible with HTTPS and WebSockets (HTTP/1.1 or later)
-  - has an SSL certificate installed
+ - is compatible with HTTPS and WebSockets (HTTP/1.1 or later)
+ - has an SSL certificate installed
 - A stable Internet connection with
-  - an externally accessible, public IP address for your reverse proxy to listen to
-  - at least 10 Mbps downstream and upstream
+ - an externally accessible, public IP address for your reverse proxy to listen to
+ - at least 10 Mbps downstream and upstream
 - A domain name configured to point to your IP address
 
 You can use our Docker Compose or Kubernetes setup that includes a basic nginx reverse proxy with a Let's Encrypt issued SSL certificate.
 
-Auki's Hagall Discovery Service will perform regular checks on the health of your server to determine if it's fit to serve traffic. Make sure that you have enough spare compute capacity and bandwidth for hosting sessions or your server might be delisted from the network.
+Auki's Hagall Discovery Service will perform regular checks on the health of your server to determine if it's fit to serve traffic. Make sure that you have enough spare compute capacity and bandwidth for hosting sessions, or your server might be delisted from the network.
 
 ### Configuration
 
@@ -70,12 +70,12 @@ Configuration parameters can be passed to Hagall either as environment variables
 
 Here are some example parameters:
 
-| Flag              | Environment variable   | Default | Example                    | Description                                                                                                                |
+| Flag | Environment variable | Default | Example | Description |
 | ----------------- | ---------------------- | ------- | -------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| --addr            | HAGALL_ADDR            | :4000   | :4000                      | Listening address for client connections. This is the port you want your reverse proxy to forward traffic to.              |
-| --log-indent      | HAGALL_LOG_INDENT      | false   | true                       | Indent logs                                                                                                                |
-| --public-endpoint | HAGALL_PUBLIC_ENDPOINT | _N/A_   | https://hagall.example.com | The public endpoint where this Hagall server is reachable. This endpoint will be registered with Hagall Discovery Service. |
-| --log-level       | HAGALL_LOG_LEVEL       | info    | debug                      | The log level (debug, info, warning or error)                                                                              |
+| --addr | HAGALL_ADDR | :4000 | :4000 | Listening address for client connections. This is the port you want your reverse proxy to forward traffic to. |
+| --log-indent | HAGALL_LOG_INDENT | false | true | Indent logs |
+| --public-endpoint | HAGALL_PUBLIC_ENDPOINT | _N/A_ | https://hagall.example.com | The public endpoint where this Hagall server is reachable. This endpoint will be registered with Hagall Discovery Service. |
+| --log-level | HAGALL_LOG_LEVEL | info | debug | The log level (debug, info, warning or error) |
 
 ### Binary
 
@@ -91,13 +91,13 @@ We build pre-compiled binaries for these operating systems and architectures:
 * FreeBSD x86, x86_64
 * Solaris x86_64
 
-> **_NOTE:_** Auki Labs doesn't test all of these platforms actively. Windows, FreeBSD and Solaris builds are currently experimental. We don't guarantee that everything works, but feel free to reach out with your test results.
+> **_NOTE:_** Auki Labs doesn't test all of these platforms actively. Windows, FreeBSD, and Solaris builds are currently experimental. We don't guarantee that everything works but feel free to reach out with your test results.
 
 1. Download the latest Hagall from [GitHub](https://github.com/aukilabs/hagall/releases)
 2. Run it with `./hagall --public-endpoint=https://hagall.example.com`
 3. Expose it using your own reverse proxy with an SSL certificate.
 
-We comment you to use a daemon manager such as systemd, launchd, SysV Init, runit or Supervisord, to make sure Hagall stays running at all times.
+We recommend you use a daemon manager such as systemd, launchd, SysV Init, runit or Supervisord, to make sure Hagall stays running at all times.
 
 Make sure that your web server or reverse proxy has support for WebSockets. If you choose to use nginx, this configuration is needed to enable WebSocket support for the Hagall upstream:
 ```
@@ -133,18 +133,18 @@ _See the full list on [Docker Hub](https://hub.docker.com/r/aukilabs/hagall)._
 
 If you're using a non-version specific tag (`stable` or `latest`) or if the version tag you use matches the new version of Hagall you want to upgrade to, simply run `docker pull aukilabs/hagall:stable` (where `stable` is the tag you use) and then restart your container with `docker restart hagall` (if `hagall` is the name of your container).
 
-If you're using a version specific tag and the new version of Hagall you want to upgrade to doesn't match the tag you use, you need to first change the tag you use and then restart your container. (`v0` matches any v0.x.x version, `v0.4` matches any v0.4.x version and so on.)
+If you're using a version-specific tag and the new version of Hagall you want to upgrade to doesn't match the tag you use, you need to first change the tag you use and then restart your container. (`v0` matches any v0.x.x version, `v0.4` matches any v0.4.x version, and so on.)
 
 ### Docker Compose
 
 Since Hagall needs to be exposed with an HTTPS address and Hagall itself doesn't terminate HTTPS, instead of using the pure Docker setup as described above, we recommend you to use our Docker Compose file that sets up an `nginx-proxy` container that terminates HTTPS and a `letsencrypt` container that obtains a free Let's Encrypt SSL certificate alongside Hagall.
 
-1. Configure your domain name to point to your externally exposed public IP address and configure any firewalls and port forwarding rules to allow incoming traffic to port 80 and 443.
+1. Configure your domain name to point to your externally exposed public IP address and configure any firewalls and port forwarding rules to allow incoming traffic to ports 80 and 443.
 2. Download the latest Docker Compose YAML file from [GitHub](https://github.com/aukilabs/hagall/blob/main/docker-compose.yml).
-3. Configure the environment variables to your liking (you must at least set `VIRTUAL_HOST`, `LETSENCRYPT_HOST` and `HAGALL_PUBLIC_ENDPOINT`, set these to the domain name you configured in step 1).
+3. Configure the environment variables to your liking (you must at least set `VIRTUAL_HOST`, `LETSENCRYPT_HOST`, and `HAGALL_PUBLIC_ENDPOINT`, set these to the domain name you configured in step 1).
 4. With the YAML file in the same folder, start the containers using Docker Compose: `docker-compose up -d`
 
-Just as with the pure Docker setup, we recommend you to configure Docker to start automatically with your operating system. If you use our standard Docker Compose YAML file, the containers will start automatically after the Docker daemon has started.
+Just as with the pure Docker setup, we recommend you configure Docker to start automatically with your operating system. If you use our standard Docker Compose YAML file, the containers will start automatically after the Docker daemon has started.
 
 #### Upgrading
 
@@ -187,14 +187,14 @@ You must at least set the `config.HAGALL_PUBLIC_ENDPOINT` key for server registr
 
 #### Upgrading
 
-We recommend you to change to use `image.pullPolicy: Always` if you use a non-specific version tag like `stable`/`v0`/`v0.4` (configured by changing the `image.tag` value of the Helm chart), or choose to use a specific version tag like `v0.4.33`. Check *Supported tags* or the *Tags* tab on [Docker Hub](https://hub.docker.com/r/aukilabs/hagall) for the tags you can use.
+We recommend you change to use `image.pullPolicy: Always` if you use a non-specific version tag like `stable`/`v0`/`v0.4` (configured by changing the `image.tag` value of the Helm chart) or choose to use a specific version tag like `v0.4.33`. Check *Supported tags* or the *Tags* tab on [Docker Hub](https://hub.docker.com/r/aukilabs/hagall) for the tags you can use.
 
 ### Testing
 
-After launching Hagall, it's a good idea to take a look at the logs to make sure your server is registered, working and accessible. There are a few things you can look for:
+After launching Hagall, it's a good idea to take a look at the logs to make sure your server is registered, working, and accessible. There are a few things you can look for:
 
 * "hagall is successfully registered to hds" should show up in the log
-* `"message":"new client is connected","tags":{"app-key":"0xSMOKE"}}` should show up in the log, these are health checks (also knows as smoke tests) running from the central Hagall Discovery Service (HDS) to test that the server is working
+* `"message":"new client is connected","tags":{"app-key":"0xSMOKE"}}` should show up in the log. These are health checks (also known as smoke tests) running from the central Hagall Discovery Service (HDS) to test that the server is working
 * You can also check metrics like `ws_connected_clients`, see more [details](#Metrics) below
 
 ### Troubleshooting and metrics
@@ -204,7 +204,7 @@ If registration to HDS fails, check the status code in the log message. The stat
 * `"status":"504 Gateway Timeout"` or `403 Forbidden` could mean that HDS couldn't reach your Hagall instance because the connection to your public endpoint (URL) timed out. It could happen because you didn't do port forwarding in your router or didn't allow your web server / reverse proxy (such as nginx) or port 443 in your firewall. We have also seen cases where Internet Service Providers blocked common service ports like 80 and 443. Here's an example for [Orcon](https://help.orcon.net.nz/hc/en-us/articles/360005168154-Port-filtering-in-My-Orcon).
 * You can test that your Hagall is reachable from the public Internet using [reqbin.com](https://reqbin.com/). Write your Hagall URL (the "public endpoint" address you configured) and press the Send button. If you get a status 400 (Bad Request) back, the text is green and the content says "not websocket protocol", everything is working as it should.
 * `403 Forbidden` could also happen if your clock is out of sync. Sync it and try again. It could also happen if you run two Hagall servers at the same time with the same public endpoint (URL). Make sure you only run one Hagall with one unique public endpoint.
-* `503 Service Unavailable` means that HDS reaches a reverse proxy (such as nginx) but the backend server (Hagall) is unavailable. Check the reverse proxy logs to verify that HDS actually reaches the reverse proxy you think it reaches. And make sure Hagall is running and that the reverse proxy points to Hagall using the address it listens to (port 4000 by default). You can also try to restart your reverse proxy.
+* `503 Service Unavailable` means that HDS reaches a reverse proxy (such as nginx), but the backend server (Hagall) is unavailable. Check the reverse proxy logs to verify that HDS actually reaches the reverse proxy you think it reaches. And make sure Hagall is running and that the reverse proxy points to Hagall using the address it listens to (port 4000 by default). You can also try to restart your reverse proxy.
 * `400 Bad Request` could mean that the format of your public endpoint is invalid. It needs to be prefixed with `https://` and not `http://`. Follow the same format as in the [configuration](#Configuration) section. Note that if you use the Docker Compose setup, `VIRTUAL_HOST` and `LETSENCRYPT_HOST` should be without the `https://` prefix and `HAGALL_PUBLIC_ENDPOINT` should have the `https://` prefix.
 
 #### Admin port
@@ -213,12 +213,12 @@ Other than the ordinary port used for WebSocket traffic, Hagall is also listenin
 This port is not exposed externally by default and should not be, so you would have to connect to it from the same machine as you're running Hagall on or from your internal network only.
 
 ```
-    --admin-addr                string               Admin listening address.
-                                                     Env:     HAGALL_ADMIN_ADDR
-                                                     Default: ":18190"
+ --admin-addr string Admin listening address.
+ Env: HAGALL_ADMIN_ADDR
+ Default: ":18190"
 ```
 
-For example if Hagall is running on your local machine and you visit http://localhost:18190/debug/pprof/ you can get profiling data.
+For example, if Hagall is running on your local machine and you visit http://localhost:18190/debug/pprof/ you can get profiling data.
 If you set up Prometheus, you can scrape metrics from the /metrics endpoint.
 
 ##### Endpoints
@@ -226,11 +226,11 @@ If you set up Prometheus, you can scrape metrics from the /metrics endpoint.
 * `/metrics` - Prometheus-formatted metrics
 * `/health` - Health check endpoint, returns 200 OK if service is running
 * `/debug/pprof/` - Index page of Go's [pprof](https://pkg.go.dev/net/http/pprof) package
-  * There are many sub-endpoints useful for profiling, please refer to the index page
+ * There are many sub-endpoints useful for profiling. Please refer to the index page
 
 #### Metrics
 
 Other than the standard Golang metrics coming from [prometheus/client_golang](https://github.com/prometheus/client_golang) with `go_*`, `process_*` prefixes etc., these additional metrics are available:
 
 * `ws_*` - WebSocket related metrics
-  * A very useful metrics to look at is `ws_connected_clients` which is a gauge that represents the number of connected WebSocket clients. Note that the smoke tests are also WebSocket clients so it will flip between 0 and 1 during these tests.
+ * A very useful metrics to look at is `ws_connected_clients`, which is a gauge that represents the number of connected WebSocket clients. Note that the smoke tests are also WebSocket clients, so it will flip between 0 and 1 during these tests.
