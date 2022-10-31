@@ -37,7 +37,7 @@ If you have spare compute resources, enough bandwidth and wish to become a Hagal
 
 If you are running into problems, you can report them as [issues](https://github.com/aukilabs/hagall/issues) here on GitHub or talk to us on [Discord](https://discord.gg/aukiverse).
 
-**It is important that your server is running 24/7 without interruption. When a server with active players is shut down, the players will lose their game session which give them a bad experience. Thus servers that misbehave will be delisted and not receive any more incoming traffic.**
+**It is important that your server is running 24/7 without interruption. When a server with active players is shut down, the players will lose their game session, which give them a bad experience. Thus servers that misbehave will be delisted and not receive any more incoming traffic.**
 
 ### Minimum requirements
 
