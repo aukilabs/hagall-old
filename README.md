@@ -113,10 +113,12 @@ Hagall is available on [Docker Hub](https://hub.docker.com/r/aukilabs/hagall).
 Here's an example of how to run it:
 
 ```
-docker run --restart=unless-stopped -e HAGALL_PUBLIC_ENDPOINT=https://hagall.example.com aukilabs/hagall:stable
+docker run --restart=unless-stopped -e HAGALL_PUBLIC_ENDPOINT=https://hagall.example.com -p 4000:4000 aukilabs/hagall:stable
 ```
 
-Hagall listens for incoming traffic on port 4000 by default.
+Hagall listens for incoming traffic on port 4000 by default. The port can be changed by
+changing Hagall's [configuration](#Configuration) or by simply changing the publish
+(`-p`) argument in the `docker run` command.
 
 We also recommend you to configure Docker to start automatically with your operating system. Using `--restart=unless-stopped` in your `docker run` command will start Hagall automatically after the Docker daemon has started.
 
