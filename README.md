@@ -113,7 +113,7 @@ Hagall is available on [Docker Hub](https://hub.docker.com/r/aukilabs/hagall).
 Here's an example of how to run it:
 
 ```
-docker run --restart=unless-stopped -e HAGALL_PUBLIC_ENDPOINT=https://hagall.example.com -p 4000:4000 aukilabs/hagall:stable
+docker run --name=hagall --restart=unless-stopped --detach -e HAGALL_PUBLIC_ENDPOINT=https://hagall.example.com -p 4000:4000 aukilabs/hagall:stable
 ```
 
 Hagall listens for incoming traffic on port 4000 by default. The port can be changed by
@@ -150,7 +150,9 @@ Just as with the pure Docker setup, we recommend you configure Docker to start a
 
 #### Upgrading
 
-You can do the same steps as for Docker, but if you're not already running Hagall or you have modified the `docker-compose.yml` file recently and want to deploy the changes, you can navigate to the folder where you have your `docker-compose.yml` file and then run `docker-compose pull` followed by `docker-compose down hagall` and `docker-compose up -d hagall`.
+You can do the same steps as for Docker, but if you're not already running Hagall or you have modified the `docker-compose.yml` file recently and want to deploy the changes, you can navigate to the folder where you have your `docker-compose.yml` file and then run `docker-compose pull` followed by `docker-compose up -d`.
+
+Note that the `docker-compose pull` command will also upgrade the other containers defined in `docker-compose.yml` such as the nginx proxy and the Let's Encrypt helper.
 
 ### Kubernetes
 
