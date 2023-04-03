@@ -27,6 +27,12 @@ The core responsibilities of Hagall are:
 - Addition and deletion of entities.
 - Broadcasting of messages to participants.
 
+## Video tutorial
+
+This tutorial will walk you through the process of setting up a Hagall node using Docker Compose. Scroll down for other setup options and detailed guidance.
+
+[![Getting started with Hagall](https://img.youtube.com/vi/sb0Qwe413_k/0.jpg)](https://www.youtube.com/watch?v=sb0Qwe413_k)
+
 ## Server Operator's Manual
 
 While we at Auki Labs run several Hagall servers in multiple regions on AWS, we allow anyone to become a Hagall server operator and help us run part of our infrastructure.
