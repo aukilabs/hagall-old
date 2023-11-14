@@ -116,8 +116,8 @@ We build pre-compiled binaries for these operating systems and architectures:
 
 > **_NOTE:_** Auki Labs doesn't test all of these platforms actively. Windows, FreeBSD and Solaris builds are currently experimental. We don't guarantee that everything works but feel free to reach out with your test results.
 
-1. Download the latest Hagall from [GitHub](https://github.com/aukilabs/hagall/releases)
-2. Generate a 
+1. Download the latest Hagall from [GitHub](https://github.com/aukilabs/hagall/releases).
+2. Generate an Ethereum-compatible wallet and put its private key in a file called `hagall-private.key` like the example above.
 3. Run it with `./hagall --public-endpoint=https://hagall.example.com --private-key-file hagall-private.key`
 4. Expose it using your own reverse proxy with an SSL certificate.
 
