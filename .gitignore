@@ -1,1 +1,3 @@
-hagall-private.key
+*.key
+*.private
+*.pem
