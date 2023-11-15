@@ -31,7 +31,7 @@ services:
     container_name: hagall
     restart: unless-stopped
     volumes:
-      - '<PATH_TO_PRIVATE_KEY>:/hagall-private.key:ro'
+      - 'hagall-private.key:/hagall-private.key:ro'
     ports:
     - 18190:18190
     environment:
@@ -40,7 +40,7 @@ services:
       LETSENCRYPT_HOST: hagall.example.com
       HAGALL_ADDR: :8080
       HAGALL_PUBLIC_ENDPOINT: https://hagall.example.com
-      HAGALL_PRIVATE_KEY_FILE: <PATH_TO_PRIVATE_KEY>
+      HAGALL_PRIVATE_KEY_FILE: /hagall-private.key
       HAGALL_LOG_LEVEL: info
 volumes:
   conf:
