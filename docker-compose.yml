@@ -31,7 +31,7 @@ services:
     container_name: hagall
     restart: unless-stopped
     volumes:
-      - 'hagall-private.key:/hagall-private.key:ro'
+      - './hagall-private.key:/hagall-private.key:ro'
     ports:
     - 18190:18190
     environment:
