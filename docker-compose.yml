@@ -30,6 +30,8 @@ services:
     image: aukilabs/hagall:stable
     container_name: hagall
     restart: unless-stopped
+    volumes:
+      - './hagall-private.key:/hagall-private.key:ro'
     ports:
     - 18190:18190
     environment:
@@ -38,7 +40,7 @@ services:
       LETSENCRYPT_HOST: hagall.example.com
       HAGALL_ADDR: :8080
       HAGALL_PUBLIC_ENDPOINT: https://hagall.example.com
-      HAGALL_WALLET_ADDR: 0x0
+      HAGALL_PRIVATE_KEY_FILE: /hagall-private.key
       HAGALL_LOG_LEVEL: info
 volumes:
   conf:

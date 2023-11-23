@@ -27,6 +27,8 @@ The core responsibilities of Hagall are:
 - Addition and deletion of entities.
 - Broadcasting of messages to participants.
 
+Every Hagall server needs a unique wallet to participate in the [posemesh economy](https://www.posemesh.org/#economy).
+
 ## Video tutorial
 
 This tutorial will walk you through the process of setting up a Hagall node using Docker Compose. Scroll down for other setup options and detailed guidance.
@@ -35,9 +37,9 @@ This tutorial will walk you through the process of setting up a Hagall node usin
 
 ## Server Operator's Manual
 
-While we at Auki Labs run several Hagall servers in multiple regions on AWS, we allow anyone to become a Hagall server operator and help us run part of our infrastructure.
+While we at Auki Labs run several Hagall servers in multiple regions on AWS, we allow anyone to become a Hagall server operator and help us run part of the posemesh infrastructure.
 
-At a later stage, we plan to launch a system that rewards Hagall server operators with tokens based on traffic served.
+After TGE, server operators will be rewarded with tokens for participating. At a later stage, we plan to reward operators based on traffic served.
 
 If you have spare compute resources, enough bandwidth and wish to become a Hagall server operator, please see the deployment methods below for instructions on how to get started.
 
@@ -76,12 +78,27 @@ Configuration parameters can be passed to Hagall either as environment variables
 
 Here are some example parameters:
 
-| Flag              | Environment variable   | Default | Example                    | Description                                                                                                                |
-| ----------------- | ---------------------- | ------- | -------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| --addr            | HAGALL_ADDR            | :4000   | :4000                      | Listening address for client connections. This is the port you want your reverse proxy to forward traffic to.              |
-| --log-indent      | HAGALL_LOG_INDENT      | false   | true                       | Indent logs                                                                                                                |
-| --public-endpoint | HAGALL_PUBLIC_ENDPOINT | _N/A_   | https://hagall.example.com | The public endpoint where this Hagall server is reachable. This endpoint will be registered with Hagall Discovery Service. |
-| --log-level       | HAGALL_LOG_LEVEL       | info    | debug                      | The log level (debug, info, warning or error)                                                                              |
+| Flag               | Environment variable    | Default | Example                    | Description                                                                                                                |
+| ------------------ | ----------------------- | ------- | -------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| --addr             | HAGALL_ADDR             | :4000   | :4000                      | Listening address for client connections. This is the port you want your reverse proxy to forward traffic to.              |
+| --log-indent       | HAGALL_LOG_INDENT       | false   | true                       | Indent logs                                                                                                                |
+| --public-endpoint  | HAGALL_PUBLIC_ENDPOINT  | _N/A_   | https://hagall.example.com | The public endpoint where this Hagall server is reachable. This endpoint will be registered with Hagall Discovery Service. |
+| --log-level        | HAGALL_LOG_LEVEL        | info    | debug                      | The log level (debug, info, warning or error)                                                                              |
+| --private-key-file | HAGALL_PRIVATE_KEY_FILE | _N/A_   | hagall-private.key         | The file that contains the private key of a Hagall server-unique Ethereum-compatible wallet                              |
+| --private-key      | HAGALL_PRIVATE_KEY      | _N/A_   | 0x0                        | The private key of a Hagall server-unique Ethereum-compatible wallet                              |
+
+
+Every Hagall server needs a unique wallet. It can be generated like this and have its private key saved to a file called `hagall-private.key`:
+```
+pip3 install web3
+python3 -c "from web3 import Web3; w3 = Web3(); acc = w3.eth.account.create(); print(f'{w3.to_hex(acc.key)}')" > hagall-private.key
+chmod 400 hagall-private.key
+```
+
+We recommend that the private key is supplied as a file (`HAGALL_PRIVATE_KEY_FILE`) rather than directly on the command line or through environment variables (`HAGALL_PRIVATE_KEY`) as it's more secure.
+
+**DO NOT CONFIGURE A WALLET WITH EXISTING ASSETS**, instead generate a new wallet for every Hagall server you operate.
+The private key of your wallet is only used by Hagall for authentication and verification of your reputation deposit and will stay on your machine. But if someone gains access to the private key file on your server, they will get access to your wallet, so please take appropriate precautions.
 
 ### Binary
 
@@ -99,9 +116,10 @@ We build pre-compiled binaries for these operating systems and architectures:
 
 > **_NOTE:_** Auki Labs doesn't test all of these platforms actively. Windows, FreeBSD and Solaris builds are currently experimental. We don't guarantee that everything works but feel free to reach out with your test results.
 
-1. Download the latest Hagall from [GitHub](https://github.com/aukilabs/hagall/releases)
-2. Run it with `./hagall --public-endpoint=https://hagall.example.com`
-3. Expose it using your own reverse proxy with an SSL certificate.
+1. Download the latest Hagall from [GitHub](https://github.com/aukilabs/hagall/releases).
+2. Generate an Ethereum-compatible wallet and put its private key in a file called `hagall-private.key` like the example above.
+3. Run it with `./hagall --public-endpoint=https://hagall.example.com --private-key-file hagall-private.key`
+4. Expose it using your own reverse proxy with an SSL certificate.
 
 We recommend you use a daemon manager such as systemd, launchd, SysV Init, runit or Supervisord, to make sure Hagall stays running at all times.
 
@@ -119,7 +137,7 @@ Hagall is available on [Docker Hub](https://hub.docker.com/r/aukilabs/hagall).
 Here's an example of how to run it:
 
 ```
-docker run --name=hagall --restart=unless-stopped --detach -e HAGALL_PUBLIC_ENDPOINT=https://hagall.example.com -p 4000:4000 aukilabs/hagall:stable
+docker run --name=hagall --restart=unless-stopped --detach --mount "type=bind,source=$(pwd)/hagall-private.key,target=/hagall-private.key,readonly" -e HAGALL_PUBLIC_ENDPOINT=https://hagall.example.com -e HAGALL_PRIVATE_KEY_FILE=/hagall-private.key -p 4000:4000 aukilabs/hagall:stable
 ```
 
 Hagall listens for incoming traffic on port 4000 by default. The port can be changed by
@@ -134,14 +152,14 @@ _See the full list on [Docker Hub](https://hub.docker.com/r/aukilabs/hagall)._
 * `latest` (bleeding edge, not recommended)
 * `stable` (latest stable version, recommended)
 * `v0` (specific major version)
-* `v0.4` (specific minor version)
-* `v0.4.27` (specific patch version)
+* `v0.5` (specific minor version)
+* `v0.5.0` (specific patch version)
 
 #### Upgrading
 
 If you're using a non-version specific tag (`stable` or `latest`) or if the version tag you use matches the new version of Hagall you want to upgrade to, simply run `docker pull aukilabs/hagall:stable` (where `stable` is the tag you use) and then restart your container with `docker restart hagall` (if `hagall` is the name of your container).
 
-If you're using a version-specific tag and the new version of Hagall you want to upgrade to doesn't match the tag you use, you need to first change the tag you use and then restart your container. (`v0` matches any v0.x.x version, `v0.4` matches any v0.4.x version, and so on.)
+If you're using a version-specific tag and the new version of Hagall you want to upgrade to doesn't match the tag you use, you need to first change the tag you use and then restart your container. (`v0` matches any v0.x.x version, `v0.5` matches any v0.5.x version, and so on.)
 
 ### Docker Compose
 
@@ -150,13 +168,14 @@ Since Hagall needs to be exposed with an HTTPS address and Hagall itself doesn't
 1. Configure your domain name to point to your externally exposed public IP address and configure any firewalls and port forwarding rules to allow incoming traffic to ports 80 and 443.
 2. Download the latest Docker Compose YAML file from [GitHub](https://github.com/aukilabs/hagall/blob/main/docker-compose.yml).
 3. Configure the environment variables to your liking (you must at least set `VIRTUAL_HOST`, `LETSENCRYPT_HOST` and `HAGALL_PUBLIC_ENDPOINT`, set these to the domain name you configured in step 1).
-4. With the YAML file in the same folder, start the containers using Docker Compose: `docker-compose up -d`
+4. Generate an Ethereum-compatible wallet and put its private key in a file called `hagall-private.key` like in the example above; alternatively, see this guide on [how to generate a wallet with MetaMask](https://www.posemesh.org/hagall-upgrade-guide).
+5. With the YAML file in the same folder, start the containers using Docker Compose: `docker-compose up -d`
 
 Just as with the pure Docker setup, we recommend you configure Docker to start automatically with your operating system. If you use our standard Docker Compose YAML file, the containers will start automatically after the Docker daemon has started.
 
 #### Upgrading
 
-You can do the same steps as for Docker, but if you're not already running Hagall or you have modified the `docker-compose.yml` file recently and want to deploy the changes, you can navigate to the folder where you have your `docker-compose.yml` file and then run `docker-compose pull` followed by `docker-compose up -d`.
+You can do the same steps as for Docker, but if you're not already running Hagall or you have modified the `docker-compose.yml` file recently and want to deploy the changes, you can navigate to the folder where you have your `docker-compose.yml` file and then run `docker-compose pull` followed by `docker-compose down` and `docker-compose up -d`.
 
 Note that the `docker-compose pull` command will also upgrade the other containers defined in `docker-compose.yml` such as the nginx proxy and the Let's Encrypt helper.
 
@@ -176,7 +195,7 @@ The chart can be deployed by CI/CD tools such as ArgoCD or Flux or it can be dep
 
 ```
 helm repo add aukilabs https://charts.aukiverse.com
-helm install hagall aukilabs/hagall --set config.HAGALL_PUBLIC_ENDPOINT=https://hagall.example.com
+helm install hagall aukilabs/hagall --set config.HAGALL_PUBLIC_ENDPOINT=https://hagall.example.com --set-file secrets.privateKey=hagall-private.key
 ```
 
 #### Uninstalling
@@ -193,11 +212,11 @@ Please see [values.yaml](https://github.com/aukilabs/helm-charts/blob/main/chart
 
 Values can be overridden either by using a values file (the `-f` or `--values` flags) or by setting them on the command line using the `--set` flag. For more information, see the official [documentation](https://helm.sh/docs/helm/helm_install/).
 
-You must at least set the `config.HAGALL_PUBLIC_ENDPOINT` key for server registration to work. But depending on which ingress controller you use, you need to set `ingress.enabled=true`, `ingress.hosts[0].host=hagall.example.com` and so on.
+You must at least set the `config.HAGALL_PUBLIC_ENDPOINT` key for server registration to work. But depending on which ingress controller you use, you need to set `ingress.enabled=true`, `ingress.hosts[0].host=hagall.example.com` and so on. You also need to configure a secret containing the private key of your Hagall-exclusive wallet, one per Hagall server, either using an existing secret inside Kubernetes or by passing the wallet as a file, letting the chart create the Kubernetes secret for you.
 
 #### Upgrading
 
-We recommend you change to use `image.pullPolicy: Always` if you use a non-specific version tag like `stable`/`v0`/`v0.4` (configured by changing the `image.tag` value of the Helm chart) or choose to use a specific version tag like `v0.4.33`. Check *Supported tags* or the *Tags* tab on [Docker Hub](https://hub.docker.com/r/aukilabs/hagall) for the tags you can use.
+We recommend you change to use `image.pullPolicy: Always` if you use a non-specific version tag like `stable`/`v0`/`v0.5` (configured by changing the `image.tag` value of the Helm chart) or choose to use a specific version tag like `v0.5.0`. Check *Supported tags* or the *Tags* tab on [Docker Hub](https://hub.docker.com/r/aukilabs/hagall) for the tags you can use.
 
 ### Testing
 
