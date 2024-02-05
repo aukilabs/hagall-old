@@ -45,7 +45,7 @@ If you have spare compute resources, enough bandwidth and wish to become a Hagal
 
 If you are running into problems, you can report them as [issues](https://github.com/aukilabs/hagall/issues) here on GitHub or talk to us on [Discord](https://discord.gg/aukiverse).
 
-**It is important that your server is running 24/7 without interruption. When a server with active players is shut down, the players will lose their game session, which give them a bad experience. Thus servers that misbehave will be delisted and not receive any more incoming traffic.**
+**It is important that your server is running 24/7 without interruption. When a server with active participants is shut down, the participants will lose their session, which give them a bad experience. Thus servers that misbehave will be delisted and not receive any more incoming traffic.**
 
 ### Minimum requirements
 
@@ -88,14 +88,15 @@ Here are some example parameters:
 | --private-key      | HAGALL_PRIVATE_KEY      | _N/A_   | 0x0                        | The private key of a Hagall server-unique Ethereum-compatible wallet                              |
 
 
-Every Hagall server needs a unique wallet. It can be generated like this and have its private key saved to a file called `hagall-private.key`:
+Every Hagall server needs a unique wallet. You can generate it in a wallet app of your choice (such as MetaMask) and copy its private key to a file called `hagall-private.key`.
+If you wish to generate a wallet on the command-line, make sure that you back up your private key (for example by adding it to your wallet app) to not lose your stake or rewards. Here is an example command to generate a wallet and save its private key to a file so Hagall can use it:
 ```
 pip3 install web3
 python3 -c "from web3 import Web3; w3 = Web3(); acc = w3.eth.account.create(); print(f'{w3.to_hex(acc.key)}')" > hagall-private.key
 chmod 400 hagall-private.key
 ```
 
-We recommend that the private key is supplied as a file (`HAGALL_PRIVATE_KEY_FILE`) rather than directly on the command line or through environment variables (`HAGALL_PRIVATE_KEY`) as it's more secure.
+We recommend that the private key is supplied as a file (`HAGALL_PRIVATE_KEY_FILE`) rather than directly on the command line or through environment variables (`HAGALL_PRIVATE_KEY`) as files are more secure.
 
 **DO NOT CONFIGURE A WALLET WITH EXISTING ASSETS**, instead generate a new wallet for every Hagall server you operate.
 The private key of your wallet is only used by Hagall for authentication and verification of your reputation deposit and will stay on your machine. But if someone gains access to the private key file on your server, they will get access to your wallet, so please take appropriate precautions.
